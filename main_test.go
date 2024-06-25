@@ -10,6 +10,8 @@ import (
 )
 
 func TestMainHandlerStatusOk(t *testing.T) {
+	cafeExpected := []string{"Мир кофе", "Сладкоежка", "Кофе и завтраки", "Сытый студент"}
+
 	req := httptest.NewRequest("GET", "/cafe?count=4&city=moscow", nil)
 
 	responseRecorder := httptest.NewRecorder()
@@ -19,6 +21,9 @@ func TestMainHandlerStatusOk(t *testing.T) {
 	assert.Equal(t, responseRecorder.Code, http.StatusOK)
 
 	assert.NotEmpty(t, responseRecorder.Body.String())
+
+	cafe := strings.Split(responseRecorder.Body.String(), ",")
+	assert.Equal(t, cafe, cafeExpected)
 }
 
 func TestMainHandlerWrongCity(t *testing.T) {
@@ -36,6 +41,7 @@ func TestMainHandlerWrongCity(t *testing.T) {
 
 func TestMainHandlerWhenCountMoreThanTotal(t *testing.T) {
 	totalCount := 4
+	cafeExpected := []string{"Мир кофе", "Сладкоежка", "Кофе и завтраки", "Сытый студент"}
 	req := httptest.NewRequest("GET", "/cafe?count=5&city=moscow", nil) // здесь нужно создать запрос к сервису
 
 	responseRecorder := httptest.NewRecorder()
@@ -46,4 +52,7 @@ func TestMainHandlerWhenCountMoreThanTotal(t *testing.T) {
 	lenCafe := len(cafe)
 
 	assert.Equal(t, lenCafe, totalCount)
+
+	assert.Equal(t, cafe, cafeExpected)
+
 }
